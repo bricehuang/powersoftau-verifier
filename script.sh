@@ -3,7 +3,6 @@
 # TODOs:
 # make script actually abort on download fail
 # logging via >> instead of echo
-# extract hash from verify_transform_constrained terminal output
 # compute blake2 hash of n+1th challenge, check it matches extracted hash
 # script to remount 512G disk on vm after reboot
 
@@ -83,6 +82,8 @@ function check () {
     download $3 new_challenge_purported
 
     # TODO: check hashes of new_challenge, new_challenge_purported equal
+    n_plus_one=`expr $1 + 1`
+    cat output_round_$1.txt | sed -n -e '/`new_challenge` file/,$p' | tail -n +2 | sed -n '/Done/q;p' | tr -d '\t' | tr -d '\n' | tr -d ' ' >> expected_challenge_hash_$n_plus_one.txt
 
     # clean up
     rm challenge
