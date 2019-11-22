@@ -70,7 +70,7 @@ function check () {
 
     # check that nth response is consistent with nth challenge,
     # and produce new_challenge, which should be n+1th challenge
-    ../phase2-bn254/powersoftau/target/release/verify_transform_constrained output_round_$1.txt
+    ../phase2-bn254/powersoftau/target/release/verify_transform_constrained > output_round_$1.txt
     download $3 new_challenge_purported
 
     # TODO: check hashes of new_challenge, new_challenge_purported equal
