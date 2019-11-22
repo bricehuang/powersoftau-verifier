@@ -97,7 +97,7 @@ function check () {
     echo "Extracted expected hash of challenge $n_plus_one" >> log.txt
 
     # TODO: produce hash of new_challenge_purported, this next line is placeholder
-    printf "asdf" >> challenge_hashes/actual_$n_plus_one.txt
+    python3 blake2.py new_challenge >> challenge_hashes/actual_$n_plus_one.txt
     echo "Computed actual hash of challenge $n_plus_one" >> log.txt
 
     # verify computed and expected hashes are equal, and abort otherwise
