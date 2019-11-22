@@ -34,14 +34,23 @@ responses=(
     response_0014_weijie
 )
 
-function download () {
-    # downloads challenge or response file from cloud and assigns it local name
+function download_attempt () {
+    # downloads challenge or response file from cloud and assigns it local name.
     # params:
     # 1: remote name of file, i.e. part of url of file after https://ppot.blob.core.windows.net/public/
     # 2: local name to save file as
-    # TODO: make download safe
-    # TODO: log something on successful download
     curl https://ppot.blob.core.windows.net/public/$1 --output $2
+}
+
+function download () {
+    # downloads challenge or response file from cloud and assigns it local name
+    # attempts 3 times. If fail all 3 times, abort with error message.
+    # params:
+    # 1: remote name of file, i.e. part of url of file after https://ppot.blob.core.windows.net/public/
+    # 2: local name to save file as
+    # TODO: make sure this does what it's supposed to
+    download_attempt $1 $2 || download_attempt $1 $2 || download_attempt $1 $2 || ( ( echo Failed to download $1, quitting... ) && ( exit 1 ) )
+    echo Successfully downloaded $1
 }
 
 function check () {
