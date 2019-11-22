@@ -41,7 +41,7 @@ function download_attempt () {
     # params:
     # 1: remote name of file, i.e. part of url of file after https://ppot.blob.core.windows.net/public/
     # 2: local name to save file as
-    curl https://ppot.blob.core.windows.net/public/$1 --output $2
+    axel -a https://ppot.blob.core.windows.net/public/$1 -o $2
 }
 
 function download () {
