@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 challenges=(
     challenge_initial
     challenge_0002_kobi
@@ -49,7 +51,7 @@ function download () {
     # 1: remote name of file, i.e. part of url of file after https://ppot.blob.core.windows.net/public/
     # 2: local name to save file as
     # TODO: make sure this does what it's supposed to
-    download_attempt $1 $2 || download_attempt $1 $2 || download_attempt $1 $2 || ( ( echo Failed to download $1, quitting... ) && ( exit 1 ) )
+    download_attempt $1 $2 || download_attempt $1 $2 || download_attempt $1 $2 || ( echo Failed to download $1, quitting...; exit 1 )
     echo Successfully downloaded $1
 }
 
