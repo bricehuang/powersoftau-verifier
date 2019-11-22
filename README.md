@@ -9,7 +9,7 @@ The script is run on an Azure VM with at least 512GB of storage.
 ## Usage
 
 ```
-scp script.sh ubuntu@104.215.159.250:/mnt/disk0/verify/script.sh
+./upload.sh
 ssh ubuntu@104.215.159.250
 cd /mnt/disk0/verify/
 ./script.sh
