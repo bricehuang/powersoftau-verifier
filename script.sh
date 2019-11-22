@@ -3,7 +3,7 @@
 # TODOs:
 # make script actually abort on download fail
 # logging via >> instead of echo
-# compute blake2 hash of n+1th challenge, check it matches extracted hash
+# compute blake2 hash of n+1th challenge
 # script to remount 512G disk on vm after reboot
 
 set -e
@@ -69,7 +69,7 @@ function check () {
     # 2: remote name of nth response file
     # 3: remote name of n+1th challenge file
 
-    echo Verifying round $1
+    echo "Verifying round $1"
 
     # note that when n>1, nth challenge file was downloaded in the previous round, as new_challenge_purported
     # for n=1, we download the 1st challenge file as new_challenge_purported before calling this function
@@ -79,11 +79,21 @@ function check () {
     # check that nth response is consistent with nth challenge,
     # and produce new_challenge, which should be n+1th challenge
     ../phase2-bn254/powersoftau/target/release/verify_transform_constrained > output_round_$1.txt
+    echo "Verified response $1 is consistent"
     download $3 new_challenge_purported
 
     # TODO: check hashes of new_challenge, new_challenge_purported equal
     n_plus_one=`expr $1 + 1`
-    cat output_round_$1.txt | sed -n -e '/`new_challenge` file/,$p' | tail -n +2 | sed -n '/Done/q;p' | tr -d '\t' | tr -d '\n' | tr -d ' ' >> expected_challenge_hash_$n_plus_one.txt
+    cat output_round_$1.txt | sed -n -e "/`new_challenge` file/,$p" | tail -n +2 | sed -n "/Done/q;p" | tr -d "\t" | tr -d "\n" | tr -d " " >> expected_challenge_hash_$n_plus_one.txt
+    printf "\n" >> expected_challenge_hash_$n_plus_one.txt
+    # TODO: produce hash of new_challenge_purported, this next line is placeholder
+    printf "asdf" >> challenge_hash_$n_plus_one.txt
+    if cmp -s challenge_hash_$n_plus_one.txt expected_challenge_hash_$n_plus_one.txt ; then
+       echo "Verified challenge $n_plus_one is consistent"
+    else
+       echo "Challenge $n_plus_one is not consistent, quitting..."
+       exit 1
+    fi
 
     # clean up
     rm challenge
