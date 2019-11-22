@@ -3,7 +3,6 @@
 # TODOs:
 # make script actually abort on download fail
 # log axel output. Currently run into "Can't setup alternate output. Deactivating."
-# compute blake2 hash of n+1th challenge
 # script to remount 512G disk on vm after reboot
 
 set -e
@@ -94,11 +93,13 @@ function check () {
     n_plus_one=`expr $1 + 1`
     cat round_outputs/output_round_$1.txt | sed -n -e '/`new_challenge`/,$p' | tail -n +2 | sed -n "/Done/q;p" | tr -d "\t" | tr -d "\n" | tr -d " " >> challenge_hashes/expected_$n_plus_one.txt
     echo "" >> challenge_hashes/expected_$n_plus_one.txt
-    echo "Extracted expected hash of challenge $n_plus_one" >> log.txt
+    echo "Extracted expected hash of challenge $n_plus_one:" >> log.txt
+    cat challenge_hashes/expected_$n_plus_one.txt >> log.txt
 
-    # TODO: produce hash of new_challenge_purported, this next line is placeholder
-    python3 blake2.py new_challenge >> challenge_hashes/actual_$n_plus_one.txt
-    echo "Computed actual hash of challenge $n_plus_one" >> log.txt
+    # produce hash of challenge n+1, which is currently new_challenge_purported
+    python3 blake2.py new_challenge_purported >> challenge_hashes/actual_$n_plus_one.txt
+    echo "Computed actual hash of challenge $n_plus_one:" >> log.txt
+    cat challenge_hashes/actual_$n_plus_one.txt >> log.txt
 
     # verify computed and expected hashes are equal, and abort otherwise
     if cmp -s challenge_hashes/actual_$n_plus_one.txt challenge_hashes/expected_$n_plus_one.txt ; then
