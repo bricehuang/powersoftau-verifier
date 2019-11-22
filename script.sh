@@ -3,35 +3,35 @@
 challenges=(
     challenge_initial
     challenge_0002_kobi
-    challenge_0003
-    challenge_0004
-    challenge_0005
-    challenge_0006
-    challenge_0007
-    challenge_0008
-    challenge_0009
-    challenge_0010
-    challenge_0011
-    challenge_0012
-    challenge_0013
-    challenge_0014
-    challenge_0015
+    # challenge_0003
+    # challenge_0004
+    # challenge_0005
+    # challenge_0006
+    # challenge_0007
+    # challenge_0008
+    # challenge_0009
+    # challenge_0010
+    # challenge_0011
+    # challenge_0012
+    # challenge_0013
+    # challenge_0014
+    # challenge_0015
 )
 responses=(
     response_0001_weijie
-    response_0002_kobi
-    response_0003_poma
-    response_0004_pepesha
-    response_0005_amrullah
-    response_0006_zac
-    response_0007_youssef
-    response_0008_mike
-    response_0009_brecht
-    response_0010_vano
-    response_0011_zhiniang
-    response_0012_daniel
-    response_0013_kevin
-    response_0014_weijie
+    # response_0002_kobi
+    # response_0003_poma
+    # response_0004_pepesha
+    # response_0005_amrullah
+    # response_0006_zac
+    # response_0007_youssef
+    # response_0008_mike
+    # response_0009_brecht
+    # response_0010_vano
+    # response_0011_zhiniang
+    # response_0012_daniel
+    # response_0013_kevin
+    # response_0014_weijie
 )
 
 function download_attempt () {
