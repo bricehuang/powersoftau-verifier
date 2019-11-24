@@ -97,7 +97,7 @@ function check () {
     cat challenge_hashes/expected_$n_plus_one.txt >> log.txt
 
     # produce hash of challenge n+1, which is currently new_challenge_purported
-    python3 blake2.py new_challenge_purported >> challenge_hashes/actual_$n_plus_one.txt
+    b2sum new_challenge_purported | cut -f1 -d" " >> challenge_hashes/actual_$n_plus_one.txt
     echo "Computed actual hash of challenge $n_plus_one:" >> log.txt
     cat challenge_hashes/actual_$n_plus_one.txt >> log.txt
 
