@@ -45,7 +45,7 @@ function download_attempt () {
     # params:
     # 1: remote name of file, i.e. part of url of file after https://ppot.blob.core.windows.net/public/
     # 2: local name to save file as
-    echo "Attempting to download $1" >> log.txt
+    echo "Attempting to download $1 at $(date)" >> log.txt
     axel -a https://ppot.blob.core.windows.net/public/$1 -o $2 # TODO log this
 }
 
@@ -56,8 +56,17 @@ function download () {
     # 1: remote name of file, i.e. part of url of file after https://ppot.blob.core.windows.net/public/
     # 2: local name to save file as
     # TODO: make sure this does what it's supposed to
-    download_attempt $1 $2 || download_attempt $1 $2 || download_attempt $1 $2 || ( echo "Failed to download $1, quitting..." >> log.txt ; exit 1 )
-    echo "Successfully downloaded $1" >> log.txt
+    (
+    	download_attempt $1 $2 ||
+    	download_attempt $1 $2 ||
+    	download_attempt $1 $2 ||
+    	(
+    		echo "Failed to download $1, quitting..." >> log.txt;
+    		echo "Failed at $(date)" >> log.txt;
+    		exit 1
+		)
+	)
+    echo "Successfully downloaded $1 at $(date)" >> log.txt
 }
 
 function check () {
@@ -70,26 +79,34 @@ function check () {
 
     echo "" >> log.txt
     echo "--------------------------------------------------" >> log.txt
-    echo "BEGINNING VERIFICATION FOR ROUND $1" >> log.txt
+    echo "ROUND $1" >> log.txt
+    echo "Round start time: $(date)" >> log.txt
+
 
     # note that when n>1, nth challenge file was downloaded in the previous round, as new_challenge_purported
     # for n=1, we download the 1st challenge file as new_challenge_purported before calling this function
     mv new_challenge_purported challenge
 
     # download response n
+    echo "" >> log.txt
     download $2 response
 
     # check that nth response is consistent with nth challenge,
     # and produce new_challenge, which should be n+1th challenge
+    echo "" >> log.txt
+    echo "Validation of response $1 begun at $(date)" >> log.txt
     ../phase2-bn254/powersoftau/target/release/verify_transform_constrained > round_outputs/output_round_$1.txt
     cat round_outputs/output_round_$1.txt >> log.txt
-    echo "Verified response $1 is consistent" >> log.txt
+    echo "Validated response $1 is consistent at $(date)" >> log.txt
 
     # download challenge n+1
+    echo "" >> log.txt
     download $3 new_challenge_purported
 
     # extract expected hash of challenge n+1
     n_plus_one=`expr $1 + 1`
+    echo "" >> log.txt
+    echo "Validation of challenge $n_plus_one begun at $(date)" >> log.txt
     cat round_outputs/output_round_$1.txt | sed -n -e '/`new_challenge`/,$p' | tail -n +2 | sed -n "/Done/q;p" | tr -d "\t" | tr -d "\n" | tr -d " " >> challenge_hashes/expected_$n_plus_one.txt
     echo "" >> challenge_hashes/expected_$n_plus_one.txt
     echo "Extracted expected hash of challenge $n_plus_one:" >> log.txt
@@ -102,15 +119,17 @@ function check () {
 
     # verify computed and expected hashes are equal, and abort otherwise
     if cmp -s challenge_hashes/actual_$n_plus_one.txt challenge_hashes/expected_$n_plus_one.txt ; then
-       echo "Verified challenge $n_plus_one is consistent" >> log.txt
+       echo "Validated challenge $n_plus_one is consistent at $(date)" >> log.txt
     else
        echo "Challenge $n_plus_one is not consistent, quitting..." >> log.txt
+       echo "Failed at $(date)" >> log.txt
        exit 1
     fi
 
     # clean up
     rm challenge
     rm response
+    rm new_challenge
 }
 
 function main () {
